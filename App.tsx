@@ -1,60 +1,24 @@
+// App.tsx
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import MainAppScreen from "./components/MainAppScreen";
+import LoginScreen from "./components/LoginScreen";
+import { useEffect } from "react";
+import { Theme } from "./types";
 
-import React, { useState, useEffect } from 'react';
-import { onAuthStateChanged, User, signOut } from 'firebase/auth';
-import { Profile, Theme } from './types';
-import MainAppScreen from './components/MainAppScreen';
-import LoginScreen from './components/LoginScreen';
-import { getProfile, createProfile, updateProfile } from './services/firebaseService';
-import { auth } from './firebaseConfig';
+const AppContent = () => {
+  const { profile, isLoading } = useAuth();
 
-const App: React.FC = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      setIsLoading(true);
-      if (firebaseUser) {
-        setUser(firebaseUser);
-        let userProfile = await getProfile(firebaseUser.uid);
-        if (!userProfile) {
-          userProfile = await createProfile(firebaseUser.uid, firebaseUser.email || 'Nowy Gracz');
-        }
-        setProfile(userProfile);
-      } else {
-        setUser(null);
-        setProfile(null);
-      }
-      setIsLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, []);
-  
   useEffect(() => {
     if (!profile) {
-      document.body.classList.remove('dark');
+      document.body.classList.remove("dark");
     } else {
       if (profile.theme === Theme.Dark) {
-        document.body.classList.add('dark');
+        document.body.classList.add("dark");
       } else {
-        document.body.classList.remove('dark');
+        document.body.classList.remove("dark");
       }
     }
   }, [profile]);
-
-
-  const handleUpdateProfile = async (updatedProfile: Profile) => {
-    if (user) {
-        await updateProfile(user.uid, updatedProfile);
-        setProfile(updatedProfile);
-    }
-  };
-  
-  const handleLogout = async () => {
-    await signOut(auth);
-  }
 
   if (isLoading) {
     return (
@@ -64,18 +28,14 @@ const App: React.FC = () => {
     );
   }
 
+  return profile ? <MainAppScreen /> : <LoginScreen />;
+};
+
+const App = () => {
   return (
-    <div>
-      {profile ? (
-        <MainAppScreen 
-            profile={profile} 
-            onUpdateProfile={handleUpdateProfile} 
-            onLogout={handleLogout}
-        />
-      ) : (
-        <LoginScreen />
-      )}
-    </div>
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 };
 
