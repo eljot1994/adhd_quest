@@ -1,17 +1,16 @@
-
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyAjOm9OZr3H6-_51uwkmoKyq84bY3C85yU",
-  authDomain: "adhd-quest-app.firebaseapp.com",
-  projectId: "adhd-quest-app",
-  storageBucket: "adhd-quest-app.firebasestorage.app",
-  messagingSenderId: "703837762344",
-  appId: "1:703837762344:web:b7a2437cea05f8fa21161d",
-  measurementId: "G-Y1ZW26T3C5"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 // Initialize Firebase
